@@ -19,12 +19,15 @@ func (webServer *WebServer) Listen() {
 func (webServer *WebServer) CORS(ctx *web.Context, args ...interface{}) {
 	ctx.SetHeader("Access-Control-Allow-Origin", "*", true)
 	ctx.SetHeader("Access-Control-Allow-Methods", "POST", true)
+	ctx.SetHeader("Access-Control-Allow-Headers", "Access-Control-Allow-Origin", true)
 	ctx.WriteString("")
 }
 
 func (webServer *WebServer) checkVulnerableUrl(ctx *web.Context, args ...interface{}) {
 	sslCheck := &SslCheck{Url: ctx.Params["url"]}
 	isVulnerable, err := sslCheck.CheckSync()
+
+	ctx.SetHeader("Access-Control-Allow-Origin", "*", true)
 
 	if err != nil {
 		logger.Errorf("error checking: %v", err)

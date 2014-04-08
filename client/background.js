@@ -1,11 +1,16 @@
 
 function makeRequest() {
   var xhr = new XMLHttpRequest();
-  xhr.open("POST", "http://localhost:8000/api/v1/url", false);
-  xhr.addEventListener('load', function(e) {
-    console.log(e);
-  }, false);
-  xhr.send("url=gwd.lphbs.com");
+  var payload = "url=gwd.lphbs.com";
+  xhr.open("POST", "http://localhost:8000/api/v1/url", true);
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.onload = function() {
+
+  };
+  xhr.onerror = function() {
+
+  };
+  xhr.send(payload);
 }
 
 makeRequest();
