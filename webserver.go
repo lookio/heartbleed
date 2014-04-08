@@ -10,30 +10,31 @@ type WebServer struct {
 type httpHandler func(*web.Context, ...interface{})
 
 func (webServer *WebServer) Listen() {
-        web.Post("/api/v1/url", webServer.checkVulnerableUrl)
+	web.Match("OPTIONS", "/api/v1/url", webServer.CORS)
+	web.Post("/api/v1/url", webServer.checkVulnerableUrl)
 
 	web.Run(serverConfig.Server.ListenAddress + ":" + serverConfig.Server.ListenPort)
 }
 
-func (webServer *WebServer) hasAuth(f httpHandler) httpHandler {
-	return func(ctx *web.Context, data ...interface{}) {
-		f(ctx, nil)
-	}
+func (webServer *WebServer) CORS(ctx *web.Context, args ...interface{}) {
+	ctx.SetHeader("Access-Control-Allow-Origin", "*", true)
+	ctx.SetHeader("Access-Control-Allow-Methods", "POST", true)
+	ctx.WriteString("")
 }
 
 func (webServer *WebServer) checkVulnerableUrl(ctx *web.Context, args ...interface{}) {
-        sslCheck := &SslCheck{Url: ctx.Params["url"]}
-        isVulnerable, err := sslCheck.CheckSync()
+	sslCheck := &SslCheck{Url: ctx.Params["url"]}
+	isVulnerable, err := sslCheck.CheckSync()
 
-        if err != nil {
-            logger.Errorf("error checking: %v", err)
-            ctx.Abort(500, "not implemented")
-            return
-        }
+	if err != nil {
+		logger.Errorf("error checking: %v", err)
+		ctx.Abort(500, "not implemented")
+		return
+	}
 
-        if (true == isVulnerable) {
-            ctx.WriteString("1")
-        } else {
-            ctx.WriteString("0")
-        }
+	if true == isVulnerable {
+		ctx.WriteString("1")
+	} else {
+		ctx.WriteString("0")
+	}
 }
