@@ -1,8 +1,8 @@
 {
   "manifest_version"  : 2,
-  "name"              : "LivePerson Discovery",
+  "name"              : "Heartbleed",
   "version"           : "0.1",
-  "description"       : "A LivePerson customer discovery tool.",
+  "description"       : "",
   "permissions"       : ["tabs"],
   "page_action"    : {
     "default_icon"  : "heart.png",
