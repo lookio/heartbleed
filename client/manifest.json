@@ -1,0 +1,15 @@
+{
+  "manifest_version"  : 2,
+  "name"              : "LivePerson Discovery",
+  "version"           : "0.1",
+  "description"       : "A LivePerson customer discovery tool.",
+  "permissions"       : ["tabs"],
+  "page_action"    : {
+    "default_icon"  : "heart.png",
+    "default_title" : "Heartbleed Plugin",
+    "default_popup" : "popup.html"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  }
+}
