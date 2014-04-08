@@ -3,6 +3,7 @@ package main
 import (
 	"os/exec"
 	"strings"
+        "bytes"
 )
 
 type SslCheck struct {
@@ -10,19 +11,17 @@ type SslCheck struct {
 }
 
 func (sslCheck *SslCheck) CheckSync() (bool, error) {
-	app := "python"
-	arg0 := "./hb.py"
-	arg1 := sslCheck.Url
-
-	cmd := exec.Command(app, arg0, arg1)
-	output, err := cmd.Output()
+        cmd := exec.Command("python", "hb.py", sslCheck.Url)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
 
 	if err != nil {
 		logger.Errorf("error running python script: %v", err)
 		return false, err
 	}
 
-	outLines := strings.Split(string(output), "\n")
+	outLines := strings.Split(out.String(), "\n")
 	lastLine := outLines[len(outLines)-2]
 
 	return strings.Contains(lastLine, "server is vulnerable"), nil
