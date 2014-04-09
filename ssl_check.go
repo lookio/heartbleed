@@ -11,7 +11,7 @@ type SslCheck struct {
 
 func (sslCheck *SslCheck) CheckSync() (bool, error) {
         logger.Debugf("executing command: python ./hb.py %s", sslCheck.Url)
-        cmd := exec.Command("python", "./hb.py", sslCheck.Url)
+        cmd := exec.Command("python", "/opt/local/heartbleed/hb.py", sslCheck.Url)
         out, err := cmd.CombinedOutput()
 
 	if err != nil {
