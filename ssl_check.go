@@ -11,13 +11,13 @@ type SslCheck struct {
 }
 
 func (sslCheck *SslCheck) CheckSync() (bool, error) {
-        cmd := exec.Command("python", "hb.py", sslCheck.Url)
+        cmd := exec.Command("python", "./hb.py", sslCheck.Url)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()
 
 	if err != nil {
-		logger.Errorf("error running python script: %v", err)
+		logger.Errorf("error running python script: %v, %s", err, out.String())
 		return false, err
 	}
 
