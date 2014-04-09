@@ -13,6 +13,9 @@ type Config struct {
 		ListenAddress string
 		ListenPort    string
 	}
+	Sentinel struct {
+		CacheRedis string
+	}
 }
 
 var (
@@ -22,6 +25,7 @@ var (
 	serverConfig Config
 
 	logger = loggo.GetLogger("")
+	cache  = NewDb(&logger)
 )
 
 const releaseVersion = "0.0.1"
@@ -67,6 +71,7 @@ func main() {
 	// set some defaults
 	serverConfig.Server.ListenAddress = "0.0.0.0"
 	serverConfig.Server.ListenPort = "8000"
+	serverConfig.Sentinel.CacheRedis = "http://172.17.42.1:8800/api/v1/hosts/cache"
 
 	if _, err := os.Stat(configFile); err == nil {
 		err := gcfg.ReadFileInto(&serverConfig, configFile)
@@ -79,6 +84,8 @@ func main() {
 	}
 
 	logger.Debugf("config: %v", serverConfig)
+
+	go cache.StartPollingSentinel(serverConfig.Sentinel.CacheRedis)
 
 	webServer := WebServer{}
 	webServer.Listen()
