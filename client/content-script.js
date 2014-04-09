@@ -1,42 +1,42 @@
-var LP_PROPS = [
-  'lpTag',
-  '_LP_CFG_',
-  'LPMobile'
-];
+var API_ENDPOINT = "https://heartbleed.look.io/api/v1/url";
+var haveShownAlert = false;
 
-function main() {
-  //Append script to host page to open communcation channel
-  var script = document.createElement('script');
-  script.src = chrome.extension.getURL("lp-discover.js");
-  document.body.appendChild(script);
+function makeAPIRequest() {
 
-  var dataElem = document.createElement('div');
-  dataElem.id = 'lpd-plugin-data';
-  dataElem.style.display = 'none';
+  var host = window.location.host;
+  var payload = "url=" + host;
 
-  dataElem.addEventListener('data', function() {
-    var data = JSON.parse(dataElem.innerHTML);
-    checkForProps(data);
-    dataElem.innerHTML = '';
-  });
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", API_ENDPOINT, true);
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-  document.body.appendChild(dataElem);
-}
-
-function checkForProps(windowProps) {
-  windowProps.forEach(function(prop) {
-    if ( LP_PROPS.indexOf(prop) !== -1 ) {
-      //console.log('Prop exists', prop);
-      notifyExtension(prop);
+  xhr.onload = function(e) {
+    if ( this.response === "1" ) {
+      showAlert(host);
     }
-  });
+  };
+
+  xhr.send(payload);
+
 }
 
-function notifyExtension(prop) {
+function showAlert(host) {
+  haveShownAlert = true;
   chrome.runtime.sendMessage({
-    propExists : true, 
-    propName: prop
+    showAlert : true,
+    hostName : host || window.location.host
   });
 }
 
-main();
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if ( request && request.triggerAlert && haveShownAlert ) {
+    showAlert();
+  }
+});
+
+window.addEventListener('load', function() {
+  if ( window.location.protocol === 'https:' ) {
+    makeAPIRequest();
+  }
+});

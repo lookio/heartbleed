@@ -3,13 +3,19 @@
   "name"              : "Heartbleed",
   "version"           : "0.1",
   "description"       : "",
-  "permissions"       : ["tabs"],
+  "permissions"       : ["tabs", "activeTab", "notifications"],
   "page_action"    : {
-    "default_icon"  : "heart.png",
-    "default_title" : "Heartbleed Plugin",
-    "default_popup" : "popup.html"
+    "default_icon"  : "heartbleed-22.png",
+    "default_title" : "Heartbleed Plugin"
   },
+  "content_scripts"   : [{
+    "matches" : ["http://*/*", "https://*/*"],
+    "js"      : ["content-script.js"]
+  }],
   "background": {
     "scripts": ["background.js"]
-  }
+  },
+  "web_accessible_resources": [
+    "heartbleed-48.png"
+  ]
 }

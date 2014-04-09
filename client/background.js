@@ -1,16 +1,30 @@
 
-function makeRequest() {
-  var xhr = new XMLHttpRequest();
-  var payload = "url=gwd.lphbs.com";
-  xhr.open("POST", "http://localhost:8000/api/v1/url", true);
-  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-  xhr.onload = function() {
-
-  };
-  xhr.onerror = function() {
-
-  };
-  xhr.send(payload);
+function showNotifcation( host ) {
+  var notification = webkitNotifications.createNotification(
+    'heartbleed-48.png',
+    'Code Blue!',
+    [
+      host,
+      ' is not a secure site.',
+      '\n\n',
+      'More info at www.heartbleed.com \n'
+    ].join('')
+  );
+  notification.show();
 }
 
-makeRequest();
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if ( request && request.showAlert  ) {
+    showNotifcation(request.hostName);
+    chrome.pageAction.show(sender.tab.id);
+  }
+});
+
+
+chrome.pageAction.onClicked.addListener(function() {
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
+    chrome.tabs.sendMessage(tabs[0].id, { triggerAlert : true });
+  });
+
+});
