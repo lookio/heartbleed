@@ -19,5 +19,6 @@ EXPOSE 8000:8000
 RUN go get code.google.com/p/gcfg
 RUN go get github.com/hoisie/web
 RUN go get github.com/howbazaar/loggo
+RUN go get github.com/garyburd/redigo/redis
 
 CMD ["--start"]

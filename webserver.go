@@ -31,7 +31,7 @@ func (webServer *WebServer) checkVulnerableUrl(ctx *web.Context, args ...interfa
 
 	if err != nil {
 		logger.Errorf("error checking: %v", err)
-		ctx.Abort(500, "not implemented")
+		ctx.Abort(500, "error")
 		return
 	}
 
